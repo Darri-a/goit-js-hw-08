@@ -1,30 +1,38 @@
-// import Player from "@vimeo/player";
-// // import throttle from "lodash.throttle";
+import throttle from "lodash.throttle";
+const form = document.querySelector(".feedback-form");
+let formData = {};
+const formDataJson = localStorage.getItem("feedback-form-state");
 
-// const iframe = document.getElementById("vimeo-player");
-// const player = new Player(iframe);
+if (formDataJson) {
+  formData = JSON.parse(formDataJson);
+}
 
-// player.on("timeupdate", function (data) {
-//   localStorage.setItem("videoplayer-current-time", data.seconds);
-//   console.log("played the video!");
-//   console.log(data);
-// });
-// console.log("hfdbfhdfbv");
-// // const currentTime = localStorage.getItem("videoplayer-current-time");
+const emailInput = document.querySelector("[name=email]");
+const messageInput = document.querySelector("[name=message]");
 
-// // player
-// //   .setCurrentTime(currentTime)
-// //   .then(function (seconds) {
-// //     // seconds = the actual time that the player seeked to
-// //   })
-// //   .catch(function (error) {
-// //     switch (error.name) {
-// //       case "RangeError":
-// //         // the time was less than 0 or greater than the video’s duration
-// //         break;
+if (formData.email) {
+  emailInput.value = formData.email;
+}
+if (formData.message) {
+  messageInput.value = formData.message;
+}
 
-// //       default:
-// //         // some other error occurred
-// //         break;
-// //     }
-// //   });
+form.addEventListener(
+  "input",
+  throttle((data) => {
+    const formData = {
+      email: form.elements.email.value,
+      message: form.elements.message.value,
+    };
+    localStorage.setItem("feedback-form-state", JSON.stringify(formData));
+  }, 1000)
+);
+
+form.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const formData = JSON.parse(localStorage.getItem("feedback-form-state"));
+
+  console.log(formData);
+  localStorage.removeItem("feedback-form-state");
+  form.reset();
+});
